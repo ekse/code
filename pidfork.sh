@@ -8,9 +8,9 @@
 ##################################
 
 if [ $# -lt 1 ]; then
-	echo -n "usage: $0 <command>";
+	echo "usage: $0 <command>";
 	exit
 fi
-$*&
+($*) > /dev/null &
 echo $!
 exit
