@@ -17,7 +17,8 @@ REGEX_INSTRUCTION   = "\\s*SBN\\s+(#{REGEX_OPERAND})\\s*,\\s*(#{REGEX_OPERAND})\
 REGEX_SRCLINE       = "^((#{REGEX_INSTRUCTION})|(#{REGEX_COMMENT})|(#{REGEX_SPACE}))$"
 
 class SICemu
-
+    
+    # Class constructor.
     def initialize(debug=false)
         @debug = debug
         @mem = {}
@@ -28,7 +29,7 @@ class SICemu
         @filename = ""
     end
     
-	# load an assembly file (.sic) to be interpreted.    
+	# Loads program from assembly file +filename+ (sic extension).
     def load_file(filename)
         
         regex_srcline = Regexp.new(REGEX_SRCLINE)
@@ -97,8 +98,8 @@ class SICemu
         end
     end
     
-	# load an object file to be executed.
-	# Note that the object file format does contain information on
+	# Loads program from +filename+ in object form.
+	# Note that the object file format does not contain information on
 	# variables, so mapping must be done manually via set_var().
     def load_object(filename)
         
@@ -111,7 +112,7 @@ class SICemu
     
     end
 
-	# loads an instruction in memory
+	# Loads an instruction in memory.
     def load_instruction(operand_a, operand_b, operand_c)
  
         @mem[@addr]   = operand_a
@@ -184,7 +185,7 @@ class SICemu
         @mem[address]  = value
     end
     
-    # dumps the content of variables
+    # Dumps the content of variables.
     def show_variables()
         puts "[-] Variables:"
         @vars.each_pair do |name,address|
@@ -192,12 +193,13 @@ class SICemu
         end
     end
     
-	# dumps the content of memory
+	# Dumps the content of memory.
     def dump_memory()
         puts @mem
     end
     
-	# execute an instruction
+	# Executes the next instruction of the program.
+    # If +trace+ is enabled, the instruction will be shown.
     def execute_instruction(trace=false)
     
         addr_a = @addr
@@ -242,7 +244,7 @@ class SICemu
     
     end
     
-	# run the loaded program
+	# Run the loaded program.
     def run(trace=false)
         
         # Setting PC to beginning of program.
