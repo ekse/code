@@ -1,0 +1,7 @@
+# This program merely tests if the jump functionnality
+# is working. If B is a positive value, then the last
+# instruction should not be executed.
+
+SBN t, t, 0     # t = 0
+SBN t, B, 500   # t = 0 - B
+SBN t, t, 0

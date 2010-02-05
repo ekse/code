@@ -1,0 +1,9 @@
+# This program copies the value of B in A. (yeah, it
+# takes 4 instructions just to do this but remember,
+# this is a theoric architecture).
+
+SBN t, t, 0     # t = 0
+SBN t, B, 0     # t = 0 - B
+SBN A, A, 0     # A = 0
+SBN A, t, 0     # A = 0 - (-B) = B
+

@@ -1,0 +1,12 @@
+sico is a simple interpreter for the SIC (Single Instruction Computer)
+architecture. SIC was designed to determine what was the minimal 
+number of instructions necessary to create any program. It turns out
+that only one instruction (SBN) is needed.
+
+SIC is a theoric architecture that is not meant to be used in the
+real word for obvious performance reasons. I coded this interpreter
+to practice writing a disassembler and writing the interpreter wouldn't
+take much more time so I coded it also.
+
+The SICemu class does all the heavy lifting. To run a program, simply
+call sico with a .sic file as parameter.
