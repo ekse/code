@@ -1,0 +1,2 @@
+Small tool to load a shellcode from a file and debug it. CodeBlocks project.
+Based on http://www.circl.lu/assets/files/tr-12/plugx-loader.c
