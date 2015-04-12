@@ -48,6 +48,7 @@ def mergesort(x):
         return(x)
     else:
         # divide the array in 2 and mergesort both parts
-        a = mergesort(x[0:len(x)/2])
-        b = mergesort(x[len(x)/2:len(x)])
+        mid = len(x)//2
+        a = mergesort(x[:mid])
+        b = mergesort(x[mid:])
         return(__merge(a,b))
