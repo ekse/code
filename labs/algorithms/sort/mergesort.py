@@ -1,17 +1,3 @@
-# sorts a list of 2 elements or less.
-# O(1)
-def _sort(x):
-    if len(x) <= 1:
-        return(x)
-    elif len(x) == 2:
-        if x[0] > x[1]:
-            temp = x[0]
-            x[0] = x[1]
-            x[1] = temp
-        return(x)
-    else:
-        raise Exception("array larger than size 2")
-
 # merges 2 sorted lists.
 # O(n) : O(len(a) + len(b))
 def _merge(a, b):
@@ -48,9 +34,10 @@ def _merge(a, b):
 # sorted array.
 #
 def mergesort(x):
-    if len(x) <= 2:
-        _sort(x)
-        return(x)
+    if len(x) <= 1:
+       return(x)
+    elif len(x) == 2:
+        return [min(x[0], x[1]), max(x[0], x[1])]
     else:
         # divide the array in 2 and mergesort both parts
         mid = len(x)//2
