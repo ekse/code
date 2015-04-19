@@ -1,30 +1,14 @@
 # merges 2 sorted lists.
-# O(n) : O(len(a) + len(b))
 def _merge(a, b):
     m = list()
-    i = 0
-    ai = 0
-    bi = 0
-    while i < len(a+b):
-        # check if we reached the end of either the a or b array
-        if ai >= len(a):
-            # copy the rest of b
-            m += b[bi:]
-            break
-        if bi >= len(b):
-            # copy the rest of a
-            m += a[ai:]
-            break
-
+    while len(a) > 0 and len(b) > 0:
         # pick the next smallest element from a or b.
-        if a[ai] <= b[bi]:
-            m.append(a[ai])
-            ai += 1
+        if a[0] <= b[0]:
+            m.append(a.pop(0))
         else:
-            m.append(b[bi])
-            bi += 1
-        i += 1
-
+            m.append(b.pop(0))
+    m.extend(a)
+    m.extend(b)
     return(m)
 
 # mergesort uses the divide and conquer strategy to sort an array.
@@ -36,8 +20,6 @@ def _merge(a, b):
 def mergesort(x):
     if len(x) <= 1:
        return(x)
-    elif len(x) == 2:
-        return [min(x[0], x[1]), max(x[0], x[1])]
     else:
         # divide the array in 2 and mergesort both parts
         mid = len(x)//2
