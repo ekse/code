@@ -1,0 +1,13 @@
+cflags = -std=c++11 -Wno-c++11-extensions -ggdb
+cc = clang++
+#cc = g++
+
+rule cclib
+    command = $cc $cflags -c $in -o $out
+
+rule cc 
+    command = $cc $cflags $in -o $out
+
+build binarytree.o : cclib binarytree.cc
+
+build test : cc test.cc binarytree.o
