@@ -6,24 +6,23 @@ class MyNode {
     friend class BinaryTree;
     
     private:
-        int value;
-        MyNode* left;
-        MyNode* right;
+        int value_;
+        MyNode* left_;
+        MyNode* right_;
     public:
-        MyNode(int v);
+        MyNode(int value);
 };
 
 class BinaryTree {
     private:
-        MyNode* root;
+        MyNode* root_;
     
     public:
         BinaryTree();
-        void insert(int v);
-        bool contains(int v);
+        void insert(int value);
+        bool contains(int value);
         int min();
         int max();
         void traverse();
 
 };
-

@@ -5,74 +5,71 @@
  *
  */
 
-MyNode::MyNode(int v) {
-    value = v;
-    left = nullptr;
-    right = nullptr;
+MyNode::MyNode(int value) : left_(nullptr), right_(nullptr) {
+    value_ = value;
+
 }
 
-BinaryTree::BinaryTree() { root = nullptr; }
+BinaryTree::BinaryTree() : root_(nullptr) {}
 
-void BinaryTree::insert(int v) {
-    auto node = new MyNode(v);
+void BinaryTree::insert(int value) {
+    auto node = new MyNode(value);
 
-    if (root == nullptr) {
-        root = node;
+    if (root_ == nullptr) {
+        root_ = node;
         return;
     }
 
-    auto cur_node = root;
+    auto cur_node = root_;
 
     while (true) {
-        if ((v < cur_node->value) && cur_node->left == nullptr) {
-            if (cur_node->left == nullptr) {
-                cur_node->left = node;
-                break;
+        if (value < cur_node->value_) {
+            if (cur_node->left_ == nullptr) {
+                cur_node->left_ = node;
+                return;
             }
-            cur_node = cur_node->left;
+            cur_node = cur_node->left_;
         } else {
-            if (cur_node->right == nullptr) {
-                cur_node->right = node;
-                break;
+            if (cur_node->right_ == nullptr) {
+                cur_node->right_ = node;
+                return;
             }
-            cur_node = cur_node->right;
+            cur_node = cur_node->right_;
         }
     }
-
-    return;
 }
 
 // default min value is 0
 int BinaryTree::min() {
-    if (root == nullptr) {
-        return (0);
+    if (root_ == nullptr) {
+        return 0;
     }
 
-    auto cur_node = root;
+    auto cur_node = root_;
 
     while (true) {
-        if (cur_node->left == nullptr) {
+        if (cur_node->left_ == nullptr) {
             break;
         }
-        cur_node = cur_node->left;
+        cur_node = cur_node->left_;
     }
-    return (cur_node->value);
+    return (cur_node->value_);
 }
 
 // default max value is 0
 int BinaryTree::max() {
-    if (root == nullptr) {
-        return (0);
+    if (root_ == nullptr) {
+        return 0;
     }
 
-    auto cur_node = root;
+    auto cur_node = root_;
 
     while (true) {
-        if (cur_node->right == nullptr) {
+        if (cur_node->right_ == nullptr) {
             break;
         }
-        cur_node = cur_node->right;
+        cur_node = cur_node->right_;
     }
 
-    return (cur_node->value);
+    return (cur_node->value_);
 }
