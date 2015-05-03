@@ -34,9 +34,9 @@ class BinaryTree {
     BinaryTree<T>();
     void Insert(T value);
     bool Contains(T value);
-    bool empty() { return (root_ == nullptr); };
-    T min();
-    T max();
+    bool IsEmpty() { return (root_ == nullptr); };
+    T Min();
+    T Max();
     // void traverse(); -- not implemented yet
 
    private:
@@ -77,7 +77,7 @@ void BinaryTree<T>::Insert(T value) {
 
 // default min value is 0
 template <typename T>
-T BinaryTree<T>::min() {
+T BinaryTree<T>::Min() {
     if (root_ == nullptr) {
         return 0;
     }
@@ -95,7 +95,7 @@ T BinaryTree<T>::min() {
 
 // default max value is 0
 template <typename T>
-T BinaryTree<T>::max() {
+T BinaryTree<T>::Max() {
     if (root_ == nullptr) {
         return 0;
     }

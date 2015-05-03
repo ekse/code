@@ -3,12 +3,12 @@
 
 namespace {
 
-TEST(BinaryTree, empty) {
+TEST(BinaryTree, IsEmpty) {
     auto tree = BinaryTree<int>();
-    EXPECT_EQ(tree.empty(), true);
+    EXPECT_EQ(tree.IsEmpty(), true);
 
     tree.Insert(1);
-    EXPECT_EQ(tree.empty(), false);
+    EXPECT_EQ(tree.IsEmpty(), false);
 }
 
 TEST(BinaryTree, Insert) {
@@ -20,8 +20,8 @@ TEST(BinaryTree, Insert) {
     tree.Insert(8);
     tree.Insert(10);
 
-    EXPECT_EQ(tree.min(), 1);
-    EXPECT_EQ(tree.max(), 10);
+    EXPECT_EQ(tree.Min(), 1);
+    EXPECT_EQ(tree.Max(), 10);
 }
 
 }  // namespace
