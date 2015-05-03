@@ -11,6 +11,21 @@ TEST(BinaryTree, IsEmpty) {
     EXPECT_EQ(tree.IsEmpty(), false);
 }
 
+TEST(BinaryTree, Contains) {
+    auto tree = BinaryTree<int>();
+    EXPECT_EQ(tree.Contains(1), false);
+
+    tree.Insert(1);
+    EXPECT_EQ(tree.Contains(0), false);
+    EXPECT_EQ(tree.Contains(1), true);
+    EXPECT_EQ(tree.Contains(2), false);
+
+    tree.Insert(2);
+    EXPECT_EQ(tree.Contains(0), false);
+    EXPECT_EQ(tree.Contains(1), true);
+    EXPECT_EQ(tree.Contains(2), true);
+}
+
 TEST(BinaryTree, Insert) {
     auto tree = BinaryTree<int>();
 

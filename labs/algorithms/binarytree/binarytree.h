@@ -48,6 +48,31 @@ BinaryTree<T>::BinaryTree()
     : root_(nullptr) {}
 
 template <typename T>
+bool BinaryTree<T>::Contains(T value) {
+    if (root_ == nullptr) {
+        return false;
+    }
+
+    auto cur_node = root_;
+
+    while (true) {
+        if (value == cur_node->value_) {
+            return true;
+        } else if (value < cur_node->value_) {
+            if (cur_node->left_ == nullptr) {
+                return false;
+            }
+            cur_node = cur_node->left_;
+        } else {
+            if (cur_node->right_ == nullptr) {
+                return false;
+            }
+            cur_node = cur_node->right_;
+        }
+    }
+}
+
+template <typename T>
 void BinaryTree<T>::Insert(T value) {
     MyNode<T>* node = new MyNode<T>(value);
 
