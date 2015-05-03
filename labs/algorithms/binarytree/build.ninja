@@ -1,13 +1,16 @@
-cflags = -std=c++11 -Wno-c++11-extensions -ggdb
+cflags = -std=c++11 -Wno-c++11-extensions -ggdb -fcolor-diagnostics
 cc = clang++
 #cc = g++
 
+gtest_dir = gtest-1.7.0
 rule cclib
     command = $cc $cflags -c $in -o $out
 
 rule cc 
     command = $cc $cflags $in -o $out
 
-build binarytree.o : cclib binarytree.cc
+rule cctest
+    command = $cc $cflags -isystem $gtest_dir/include -pthread $in $gtest_dir/libgtest.a -o $out
 
-build test : cc test.cc binarytree.o
+# unit tests
+build binarytree_unittest : cctest binarytree_unittest.cc
