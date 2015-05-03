@@ -12,13 +12,13 @@ template <typename T>
 class MyNode {
     friend class BinaryTree<T>;
 
+   public:
+    MyNode<T>(T value);
+
    private:
     T value_;
     MyNode<T>* left_;
     MyNode<T>* right_;
-
-   public:
-    MyNode<T>(T value);
 };
 
 template <typename T>
@@ -30,16 +30,17 @@ MyNode<T>::MyNode(T value)
 // BinaryTree
 template <typename T>
 class BinaryTree {
-   private:
-    MyNode<T>* root_;
-
    public:
     BinaryTree<T>();
-    void insert(T value);
-    bool contains(T value);
+    void Insert(T value);
+    bool Contains(T value);
+    bool empty() { return (root_ == nullptr); };
     T min();
     T max();
-    void traverse();
+    // void traverse(); -- not implemented yet
+
+   private:
+    MyNode<T>* root_;
 };
 
 template <typename T>
@@ -47,7 +48,7 @@ BinaryTree<T>::BinaryTree()
     : root_(nullptr) {}
 
 template <typename T>
-void BinaryTree<T>::insert(T value) {
+void BinaryTree<T>::Insert(T value) {
     MyNode<T>* node = new MyNode<T>(value);
 
     if (root_ == nullptr) {

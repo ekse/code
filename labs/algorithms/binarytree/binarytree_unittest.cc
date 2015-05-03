@@ -3,14 +3,22 @@
 
 namespace {
 
-TEST(BinaryTree, Insertion) {
+TEST(BinaryTree, empty) {
+    auto tree = BinaryTree<int>();
+    EXPECT_EQ(tree.empty(), true);
+
+    tree.Insert(1);
+    EXPECT_EQ(tree.empty(), false);
+}
+
+TEST(BinaryTree, Insert) {
     auto tree = BinaryTree<int>();
 
-    tree.insert(1);
-    tree.insert(2);
-    tree.insert(6);
-    tree.insert(8);
-    tree.insert(10);
+    tree.Insert(1);
+    tree.Insert(2);
+    tree.Insert(6);
+    tree.Insert(8);
+    tree.Insert(10);
 
     EXPECT_EQ(tree.min(), 1);
     EXPECT_EQ(tree.max(), 10);
