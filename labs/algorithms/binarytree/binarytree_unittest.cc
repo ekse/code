@@ -32,6 +32,8 @@ namespace {
         EXPECT_EQ(tree.Contains(8), true);
         EXPECT_EQ(tree.Contains(10), true);
 
+        EXPECT_EQ(tree.IsBalanced(), true);
+
 
     }
 

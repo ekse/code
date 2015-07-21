@@ -1,5 +1,6 @@
 #include <cstddef>
 #include <iostream>
+
 #pragma once
 
 /*
@@ -12,32 +13,38 @@
  *to be done on the subtree.
  */
 
-template <typename T>
+
+template<typename T>
+class BinaryTree;
+
+template<typename T>
 class MyNode {
-   public:
-    MyNode<T>(const T& value);
-    void Insert(const T& value);
-    bool Contains(const T& value) const;
-    const T& Min() const;
-    const T& Max() const;
 
-    static void print_node(MyNode<T>* p) {
-        if (p) {
-            print_node(p->left_);
-            std::cout << p->value_ << " ";
-            print_node(p->right_);
-        }
-    }
+    friend class BinaryTree<T>;
 
-    static void print_balance_factors(MyNode<T>* p) {
-        if (p) {
-            print_balance_factors(p->left_);
-            std::cout << p->value_ << " (" << MyNode<T>::BalanceFactor(p) << ")" << std::endl;
-            print_balance_factors(p->right_);
-        }
-    }
+public:
+    MyNode<T>(const T &value);
 
-    static MyNode *insert(MyNode *p, const T &value) {
+    void Insert(const T &value);
+
+    bool Contains(const T &value) const;
+
+    const T &Min() const;
+
+    const T &Max() const;
+
+private:
+    T value_;
+    MyNode<T> *parent_;
+    MyNode<T> *left_;
+    MyNode<T> *right_;
+    int height_;
+
+    static int Height(MyNode<T> *p) { return p ? p->height_ : 0; };
+
+    static int BalanceFactor(MyNode<T> *p) { return Height(p->right_) - Height(p->left_); }
+
+    static MyNode<T> *insert(MyNode *p, const T &value) {
         if (!p)
             return new MyNode<T>(value);
         if (value < p->value_) {
@@ -49,33 +56,25 @@ class MyNode {
         return p->Balance();
     }
 
-
-   private:
-    T value_;
-    MyNode<T>* parent_;
-    MyNode<T>* left_;
-    MyNode<T>* right_;
-    int height_;
-
-    static int Height(MyNode<T>* p){ return p ? p->height_:0;};
-    static int BalanceFactor(MyNode<T>* p) { return Height(p->right_) - Height(p->left_); }
-
     void FixHeight();
-    MyNode<T>* Balance();
-    MyNode<T>* RotateLeft();
-    MyNode<T>* RotateRight();
+
+    MyNode<T> *Balance();
+
+    MyNode<T> *RotateLeft();
+
+    MyNode<T> *RotateRight();
 };
 
-template <typename T>
-MyNode<T>::MyNode(const T& value)
-    : left_(nullptr), right_(nullptr), parent_(nullptr), height_(1) {
+template<typename T>
+MyNode<T>::MyNode(const T &value)
+        : left_(nullptr), right_(nullptr), parent_(nullptr), height_(1) {
     value_ = value;
 }
 
-template <typename T>
-MyNode<T>* MyNode<T>::RotateLeft() {
-    MyNode<T>* p = this;
-    MyNode<T>* q = p->right_;
+template<typename T>
+MyNode<T> *MyNode<T>::RotateLeft() {
+    MyNode<T> *p = this;
+    MyNode<T> *q = p->right_;
     p->right_ = q->left_;
     q->left_ = p;
     p->FixHeight();
@@ -83,10 +82,10 @@ MyNode<T>* MyNode<T>::RotateLeft() {
     return q;
 }
 
-template <typename T>
-MyNode<T>* MyNode<T>::RotateRight() {
-    MyNode<T>* p = this;
-    MyNode<T>* q = p->left_;
+template<typename T>
+MyNode<T> *MyNode<T>::RotateRight() {
+    MyNode<T> *p = this;
+    MyNode<T> *q = p->left_;
     p->left_ = q->right_;
     q->right_ = p;
     p->FixHeight();
@@ -94,7 +93,7 @@ MyNode<T>* MyNode<T>::RotateRight() {
     return q;
 }
 
-template <typename T>
+template<typename T>
 void MyNode<T>::FixHeight() {
     int height_left = Height(left_);
     int height_right = Height(right_);
@@ -102,7 +101,7 @@ void MyNode<T>::FixHeight() {
 }
 
 template<typename T>
-MyNode<T>* MyNode<T>::Balance() {
+MyNode<T> *MyNode<T>::Balance() {
     MyNode<T> *p = this;
     FixHeight();
     if (BalanceFactor(p) == 2) {
@@ -120,7 +119,7 @@ MyNode<T>* MyNode<T>::Balance() {
 }
 
 template<typename T>
-bool MyNode<T>::Contains(const T& value) const {
+bool MyNode<T>::Contains(const T &value) const {
 
     auto cur_node = this;
 
@@ -141,8 +140,8 @@ bool MyNode<T>::Contains(const T& value) const {
     }
 }
 
-template <typename T>
-const T& MyNode<T>::Min() const {
+template<typename T>
+const T &MyNode<T>::Min() const {
 
     auto cur_node = this;
 
@@ -155,8 +154,8 @@ const T& MyNode<T>::Min() const {
     return (cur_node->value_);
 }
 
-template <typename T>
-const T& MyNode<T>::Max() const {
+template<typename T>
+const T &MyNode<T>::Max() const {
     auto cur_node = this;
 
     while (true) {
@@ -169,41 +168,86 @@ const T& MyNode<T>::Max() const {
     return (cur_node->value_);
 }
 
-template <typename T>
-void MyNode<T>::Insert(const T& value) {
+template<typename T>
+void MyNode<T>::Insert(const T &value) {
     insert(this, value);
 }
 
 
-template <typename T>
+template<typename T>
 class BinaryTree {
 public:
     BinaryTree<T>();
+
     void Insert(const T &value);
+
     bool Contains(const T &value) const;
+
     void Print() const;
 
+    void PrintBalanceFactors() const;
+
+    bool IsBalanced() const;
+
 private:
-    MyNode<T>* root_;
+    MyNode<T> *root_;
+
+    static void print_node(MyNode<T> *p) {
+        if (p) {
+            print_node(p->left_);
+            std::cout << p->value_ << " ";
+            print_node(p->right_);
+        }
+    }
+
+    static void print_balance_factors(MyNode<T> *p) {
+        if (p) {
+            print_balance_factors(p->left_);
+            std::cout << p->value_ << " (" << MyNode<T>::BalanceFactor(p) << ")" << std::endl;
+            print_balance_factors(p->right_);
+        }
+    }
+
+    static bool is_balanced(MyNode<T> *p) {
+        if (p) {
+            auto node_balance_factor = MyNode<T>::BalanceFactor(p);
+            return (node_balance_factor <= 1 && node_balance_factor >= -1)
+                   && is_balanced(p->left_)
+                   && is_balanced(p->right_);
+        }
+        return true;
+    }
+
 };
 
-template <typename T>
-BinaryTree<T>::BinaryTree() : root_(nullptr) {}
+template<typename T>
+BinaryTree<T>::BinaryTree() : root_(nullptr) { }
 
-template <typename T>
+template<typename T>
 void BinaryTree<T>::Insert(const T &value) {
     root_ = !root_ ? new MyNode<T>(value) : MyNode<T>::insert(root_, value);
 }
 
-template <typename T>
+template<typename T>
 bool BinaryTree<T>::Contains(const T &value) const {
     return !root_ ? false : root_->Contains(value);
 }
 
-template <typename T>
+template<typename T>
 void BinaryTree<T>::Print() const {
     if (root_) {
-        MyNode<T>::print_node(root_);
+        BinaryTree<T>::print_node(root_);
     }
+}
 
+template<typename T>
+void BinaryTree<T>::PrintBalanceFactors() const {
+    if (root_) {
+        BinaryTree<T>::print_balance_factors(root_);
+    }
+}
+
+template<typename T>
+bool BinaryTree<T>::IsBalanced() const {
+    return BinaryTree<T>::is_balanced(root_);
 }
