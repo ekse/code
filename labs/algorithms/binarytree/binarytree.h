@@ -1,11 +1,10 @@
 #include <cstddef>
+#include <iostream>
 #pragma once
 
-/* TODO:
- - make BinaryTree an abstract class and AVLTree a subclass.
- - implement Traverse() iterator
-
+/*
  * This class implements an AVL tree.
+ * Heavily based on http://kukuruku.co/hub/cpp/avl-trees.
  *
  *The balance_factor of a node is calculated as height(left_subtree) -
  *height(right_subtree). For a balanced tree the balance_factor of all nodes
@@ -16,17 +15,40 @@
 template <typename T>
 class MyNode {
    public:
-    MyNode<T>(T value);
-    void Insert(T value);
-    bool Contains(T value);
-    MyNode<T>* RotateLeft();
-    MyNode<T>* RotateRight();
-    T Min();
-    T Max();
-    // void traverse(); -- not implemented yet
+    MyNode<T>(const T& value);
+    void Insert(const T& value);
+    bool Contains(const T& value) const;
+    const T& Min() const;
+    const T& Max() const;
 
-    static int Height(MyNode<T>* p) { return p ? p->height_:0;};
-    static int BalanceFactor(MyNode<T>* p) { return Height(p->right_) - Height(p->left_); }
+    static void print_node(MyNode<T>* p) {
+        if (p) {
+            print_node(p->left_);
+            std::cout << p->value_ << " ";
+            print_node(p->right_);
+        }
+    }
+
+    static void print_balance_factors(MyNode<T>* p) {
+        if (p) {
+            print_balance_factors(p->left_);
+            std::cout << p->value_ << " (" << MyNode<T>::BalanceFactor(p) << ")" << std::endl;
+            print_balance_factors(p->right_);
+        }
+    }
+
+    static MyNode *insert(MyNode *p, const T &value) {
+        if (!p)
+            return new MyNode<T>(value);
+        if (value < p->value_) {
+            p->left_ = insert(p->left_, value);
+        }
+        else {
+            p->right_ = insert(p->right_, value);
+        };
+        return p->Balance();
+    }
+
 
    private:
     T value_;
@@ -35,12 +57,17 @@ class MyNode {
     MyNode<T>* right_;
     int height_;
 
+    static int Height(MyNode<T>* p){ return p ? p->height_:0;};
+    static int BalanceFactor(MyNode<T>* p) { return Height(p->right_) - Height(p->left_); }
+
     void FixHeight();
     MyNode<T>* Balance();
+    MyNode<T>* RotateLeft();
+    MyNode<T>* RotateRight();
 };
 
 template <typename T>
-MyNode<T>::MyNode(T value)
+MyNode<T>::MyNode(const T& value)
     : left_(nullptr), right_(nullptr), parent_(nullptr), height_(1) {
     value_ = value;
 }
@@ -75,7 +102,7 @@ void MyNode<T>::FixHeight() {
 }
 
 template<typename T>
-MyNode<T> *MyNode<T>::Balance() {
+MyNode<T>* MyNode<T>::Balance() {
     MyNode<T> *p = this;
     FixHeight();
     if (BalanceFactor(p) == 2) {
@@ -89,11 +116,11 @@ MyNode<T> *MyNode<T>::Balance() {
             left_ = p->left_->RotateLeft();
         return (p->RotateRight());
     }
-    return this; // no balance needed
+    return this;
 }
 
 template<typename T>
-bool MyNode<T>::Contains(T value) {
+bool MyNode<T>::Contains(const T& value) const {
 
     auto cur_node = this;
 
@@ -115,35 +142,7 @@ bool MyNode<T>::Contains(T value) {
 }
 
 template <typename T>
-void MyNode<T>::Insert(T value) {
-    MyNode<T>* node = new MyNode<T>(value);
-
-    auto cur_node = this;
-
-    while (true) {
-        if (value < cur_node->value_) {
-            if (cur_node->left_ == nullptr) {
-                cur_node->left_ = node;
-                node->parent_ = cur_node;
-                break;
-            }
-            cur_node = cur_node->left_;
-        } else {
-            if (cur_node->right_ == nullptr) {
-                cur_node->right_ = node;
-                node->parent_ = cur_node;
-                break;
-            }
-            cur_node = cur_node->right_;
-        }
-    }
-
-    Balance();
-}
-
-// default min value is 0
-template <typename T>
-T MyNode<T>::Min() {
+const T& MyNode<T>::Min() const {
 
     auto cur_node = this;
 
@@ -156,9 +155,8 @@ T MyNode<T>::Min() {
     return (cur_node->value_);
 }
 
-// default max value is 0
 template <typename T>
-T MyNode<T>::Max() {
+const T& MyNode<T>::Max() const {
     auto cur_node = this;
 
     while (true) {
@@ -171,3 +169,41 @@ T MyNode<T>::Max() {
     return (cur_node->value_);
 }
 
+template <typename T>
+void MyNode<T>::Insert(const T& value) {
+    insert(this, value);
+}
+
+
+template <typename T>
+class BinaryTree {
+public:
+    BinaryTree<T>();
+    void Insert(const T &value);
+    bool Contains(const T &value) const;
+    void Print() const;
+
+private:
+    MyNode<T>* root_;
+};
+
+template <typename T>
+BinaryTree<T>::BinaryTree() : root_(nullptr) {}
+
+template <typename T>
+void BinaryTree<T>::Insert(const T &value) {
+    root_ = !root_ ? new MyNode<T>(value) : MyNode<T>::insert(root_, value);
+}
+
+template <typename T>
+bool BinaryTree<T>::Contains(const T &value) const {
+    return !root_ ? false : root_->Contains(value);
+}
+
+template <typename T>
+void BinaryTree<T>::Print() const {
+    if (root_) {
+        MyNode<T>::print_node(root_);
+    }
+
+}
