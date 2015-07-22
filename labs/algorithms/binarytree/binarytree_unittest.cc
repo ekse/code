@@ -1,3 +1,4 @@
+#include <gtest/gtest-spi.h>
 #include "gtest/gtest.h"
 #include "binarytree.h"
 
@@ -20,6 +21,22 @@ namespace {
         EXPECT_EQ(tree.Contains(3), false);
     }
 
+    TEST(BinaryTree, MinMax) {
+        auto tree = BinaryTree<int>();
+        tree.Insert(2);
+        tree.Insert(6);
+        tree.Insert(10);
+        tree.Insert(8);
+
+        EXPECT_EQ(tree.Min(), 2);
+        EXPECT_EQ(tree.Max(), 10);
+
+        auto empty_tree = BinaryTree<int>();
+        EXPECT_DEATH(empty_tree.Min(), "");
+        EXPECT_DEATH(empty_tree.Max(), "");
+
+    }
+
     TEST(BinaryTree, Balanced) {
         auto tree = BinaryTree<int>();
         tree.Insert(2);
@@ -34,11 +51,11 @@ namespace {
 
         EXPECT_EQ(tree.IsBalanced(), true);
 
-
     }
 
+
 }  // namespace
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
