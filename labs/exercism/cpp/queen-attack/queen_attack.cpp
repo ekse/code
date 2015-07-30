@@ -41,45 +41,32 @@ namespace queen_attack {
         return black_queen_;
     }
 
-
     chess_board::operator std::string() const {
-
-        std::string output{""};
-
-        for (int x = 0; x <= 7; x++) {
-            for (int y = 0; y <= 7; y++) {
-                if (white_queen_ == position(x, y)) {
-                    output.append("W");
-                } else if (black_queen_ == position(x, y)) {
-                    output.append("B");
-                } else {
-                    output.append("_");
-                }
-
-                if (y != 7) {
-                    output.append(" ");
-                }
-
-            }
-
-            output.append("\n");
-
-        }
-
-        return output;
+        std::string result =
+                "_ _ _ _ _ _ _ _\n"
+                "_ _ _ _ _ _ _ _\n"
+                "_ _ _ _ _ _ _ _\n"
+                "_ _ _ _ _ _ _ _\n"
+                "_ _ _ _ _ _ _ _\n"
+                "_ _ _ _ _ _ _ _\n"
+                "_ _ _ _ _ _ _ _\n"
+                "_ _ _ _ _ _ _ _\n";
+        result[white_queen_.first * 16 + white_queen_.second * 2] = 'W';
+        result[black_queen_.first * 16 + black_queen_.second * 2] = 'B';
+        return result;
     }
 
     bool chess_board::can_attack() const {
 
-        return ((white_queen_.first == black_queen_.first) // same horizontal
-                or (white_queen_.second == black_queen_.second) // same vertical
-                or (are_on_diagonal(white_queen_, black_queen_)));
+        return     white_queen_.first  == black_queen_.first // same horizontal
+                or white_queen_.second == black_queen_.second // same vertical
+                or are_on_diagonal(white_queen_, black_queen_);
 
     }
 
     bool chess_board::are_on_diagonal(position white, position black) const {
-        int diff_x = abs(white.first - black.first);
-        int diff_y = abs(white.second - black.second);
-        return (diff_x == diff_y);
+        int diff_x = std::abs(white.first - black.first);
+        int diff_y = std::abs(white.second - black.second);
+        return diff_x == diff_y;
     }
 }
