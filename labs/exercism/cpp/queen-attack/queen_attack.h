@@ -1,4 +1,5 @@
 #include <vector>
+#include <string>
 #include <bits/stl_pair.h>
 
 namespace queen_attack {
@@ -18,7 +19,10 @@ namespace queen_attack {
         chess_board(position white_queen, position black_queen);
         std::pair<int, int> white() const;
         std::pair<int, int> black() const;
+        bool can_attack() const;
+        operator std::string() const;
 
+        bool are_on_diagonal(position pair, position queen_) const;
     };
 
 
