@@ -11,8 +11,8 @@ namespace queen_attack {
     }
 
     chess_board::chess_board(position white_queen, position black_queen) {
-        place_queen(QueenColor::kWhite, white_queen);
-        place_queen(QueenColor::kBlack, black_queen);
+        place_queen(QueenColor::White, white_queen);
+        place_queen(QueenColor::Black, black_queen);
     }
 
     void chess_board::place_queen(QueenColor queen, position pos) {
@@ -24,8 +24,8 @@ namespace queen_attack {
             throw std::domain_error("outside of board");
         }
 
-        auto& current_queen = (queen == QueenColor::kWhite) ? white_queen_ : black_queen_;
-        auto& other_queen = (queen == QueenColor::kWhite) ? black_queen_ : white_queen_;
+        auto& current_queen = (queen == QueenColor::White) ? white_queen_ : black_queen_;
+        auto& other_queen = (queen == QueenColor::White) ? black_queen_ : white_queen_;
         if (other_queen == pos) {
             throw std::domain_error("position already occupied");
         } else {
