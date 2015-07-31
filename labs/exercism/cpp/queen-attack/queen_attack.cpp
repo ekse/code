@@ -16,11 +16,8 @@ namespace queen_attack {
     }
 
     void chess_board::place_queen(QueenColor queen, position pos) {
-        if (pos.first < 0 or pos.second < 0) {
-            throw std::domain_error("outside of board");
-        }
-
-        if (pos.first > 7 or pos.second > 7) {
+        if (pos.first < 0 or pos.second < 0 or
+            pos.first > 7 or pos.second > 7) {
             throw std::domain_error("outside of board");
         }
 
