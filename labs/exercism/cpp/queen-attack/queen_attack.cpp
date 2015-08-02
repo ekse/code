@@ -11,23 +11,13 @@ namespace queen_attack {
     }
 
     chess_board::chess_board(position white_queen, position black_queen) {
-        place_queen(QueenColor::White, white_queen);
-        place_queen(QueenColor::Black, black_queen);
-    }
 
-    void chess_board::place_queen(QueenColor queen, position pos) {
-        if (pos.first < 0 or pos.second < 0 or
-            pos.first > 7 or pos.second > 7) {
-            throw std::domain_error("outside of board");
+        if (black_queen == white_queen) {
+            throw std::domain_error("both queens on same position");
         }
+        white_queen_ = white_queen;
+        black_queen_ = black_queen;
 
-        auto& current_queen = (queen == QueenColor::White) ? white_queen_ : black_queen_;
-        auto& other_queen = (queen == QueenColor::White) ? black_queen_ : white_queen_;
-        if (other_queen == pos) {
-            throw std::domain_error("position already occupied");
-        } else {
-            current_queen = pos;
-        }
     }
 
     std::pair<int, int> chess_board::white() const {

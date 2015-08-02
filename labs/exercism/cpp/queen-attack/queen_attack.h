@@ -6,15 +6,10 @@ namespace queen_attack {
 
     typedef std::pair<int, int> position;
 
-    enum class QueenColor {
-        White, Black
-    };
-
     class chess_board {
     private:
         position white_queen_;
         position black_queen_;
-        void place_queen(QueenColor queen, std::pair<int, int>);
 
     public:
         chess_board();
