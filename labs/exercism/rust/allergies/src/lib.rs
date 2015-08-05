@@ -1,34 +1,23 @@
-#[derive(PartialEq, Debug)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 pub enum Allergen {
-    Eggs,
-    Peanuts,
-    Shellfish,
-    Strawberries,
-    Tomatoes,
-    Chocolate,
-    Pollen,
-    Cats,
+    Eggs = 1,
+    Peanuts = 2,
+    Shellfish = 4,
+    Strawberries = 8,
+    Tomatoes = 16,
+    Chocolate = 32,
+    Pollen = 64,
+    Cats = 128,
 }
 
 pub struct Allergies {
-    pub score : i32,
+    pub score : u32,
 }
 
 impl Allergies {
     
     pub fn is_allergic_to(&self, allergen : &Allergen) -> bool {
-        let retval = match allergen {
-            &Allergen::Eggs         => self.score & 1,
-            &Allergen::Peanuts      => self.score & 2,
-            &Allergen::Shellfish    => self.score & 4,
-            &Allergen::Strawberries => self.score & 8,
-            &Allergen::Tomatoes     => self.score & 16,
-            &Allergen::Chocolate    => self.score & 32,
-            &Allergen::Pollen       => self.score & 64,
-            &Allergen::Cats         => self.score & 128,
-        };
-        
-        retval > 0
+        self.score & (*allergen as u32) > 0
     }
 
     pub fn allergies(&self) -> Vec<Allergen> {
@@ -47,7 +36,7 @@ impl Allergies {
     }
 }
 
-pub fn Allergies(score : i32) -> Allergies {
+pub fn Allergies(score : u32) -> Allergies {
     Allergies{score : score}
 }
 
