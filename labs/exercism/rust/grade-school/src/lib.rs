@@ -16,10 +16,7 @@ impl School {
     }
 
     pub fn grades(&self) -> Vec<u32> {
-        let mut out = Vec::new();
-        for k in self.years.keys() {
-            out.push(*k);
-        }
+        let mut out : Vec<_> = self.years.keys().cloned().collect();
         out.sort();
         out
     }
