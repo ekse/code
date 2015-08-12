@@ -9,7 +9,7 @@ impl School {
         School{years : HashMap::new()}
     }
 
-    pub fn add(&mut self, grade : u32, name : &'static str) {
+    pub fn add(&mut self, grade : u32, name : &str) {
         let mut names = self.years.entry(grade).or_insert(Vec::new());
         names.push(name.to_string());
         names.sort();
