@@ -16,42 +16,29 @@ fn all_number_occurences_are_even(input: &Vec<Domino>) -> bool {
 
 }
 
-fn try_piece(piece: Domino,
-             tried_pieces: Vec<Domino>,
-             mut pieces: Vec<Domino>,
-             mut chain: Vec<Domino>)
-             -> Option<Vec<Domino>> {
-    chain.push(piece);
-    pieces.extend(tried_pieces.iter().cloned());
-    add_to_chain(pieces, chain)
-
-}
-
 // returns a new chain containing all the pieces or returns None
-fn add_to_chain(pieces: Vec<Domino>, chain: Vec<Domino>) -> Option<Vec<Domino>> {
+fn add_to_chain(pieces: &Vec<Domino>, chain: &Vec<Domino>) -> Option<Vec<Domino>> {
     
     // no more pieces left to add, we have a domino chain.
     if pieces.len() == 0 {
-        return Some(chain)
+        return Some(chain.clone())
     }
 
     let mut tried_pieces : Vec<Domino> = Vec::new();
-    let mut _pieces = pieces.clone();
+    let mut new_pieces = pieces.clone();
 
-    while _pieces.len() != 0 {
-        let mut piece = _pieces.pop().unwrap();
+    while new_pieces.len() != 0 {
+        let mut piece = new_pieces.pop().unwrap();
 
-        if chain.len() == 0 || chain.last().unwrap().1 == piece.0 {
-            match try_piece(piece, tried_pieces.clone(), _pieces.clone(), chain.clone()) {
-                Some(o) => return Some(o),
-                _ => false,
-            };
-        }
-
-        // try flipping the piece
-        piece = (piece.1, piece.0);
-        if chain.last().unwrap().1 == piece.0 {
-            match try_piece(piece, tried_pieces.clone(), _pieces.clone() , chain.clone()) {
+        if chain.len() == 0 || chain.last().unwrap().1 == piece.0 || chain.last().unwrap().1 == piece.1 {
+            if chain.len() != 0 && chain.last().unwrap().1 == piece.1 {
+                piece = (piece.1, piece.0) // flip the piece
+            }
+           
+            let mut new_chain = chain.clone();
+            new_chain.push(piece);
+            new_pieces.extend(tried_pieces.iter().cloned());
+            match add_to_chain(&new_pieces, &new_chain) {
                 Some(o) => return Some(o),
                 _ => false,
             };
@@ -76,6 +63,6 @@ pub fn chain(pieces: &Vec<Domino>) -> Option<Vec<Domino>> {
         return None
     }
 
-    add_to_chain(pieces.clone(), vec![])
+    add_to_chain(&pieces, &vec![])
 
 }
