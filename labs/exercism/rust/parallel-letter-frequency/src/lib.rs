@@ -1,14 +1,15 @@
+extern crate threadpool;
+
 use std::collections::HashMap;
-use std::thread;
+use std::sync::mpsc;
+use threadpool::ThreadPool;
 
 pub type Histogram = HashMap<char, usize>;
 
 fn count_letters(text : &str) -> Histogram {
     let mut letters = HashMap::new();
-    for c in text.chars() {
-        if c.is_alphabetic() {
-            *letters.entry(c.to_lowercase().next().unwrap()).or_insert(0) += 1;
-        }
+    for c in text.chars().filter(|c| c.is_alphabetic()) {
+        *letters.entry(c.to_lowercase().next().unwrap()).or_insert(0) += 1;
     }
     letters
 }
@@ -19,11 +20,19 @@ fn merge_histograms(a : &mut Histogram, b : &Histogram ) {
     }
 }
 
-pub fn frequency(texts : &[&str], works : usize) -> Histogram {
+pub fn frequency(texts : &[&str], workers : usize) -> Histogram {
+    let pool = ThreadPool::new(workers);
     let mut letters = HashMap::new();
-    
+    let (tx, rx) = mpsc::channel();
+
     for text in texts {
-        let text_letters = count_letters(text);
+        let tx = tx.clone();
+        let data = text.to_string();
+        pool.execute(move || { 
+            tx.send(count_letters(&data));
+        });
+        
+        let text_letters = rx.recv().unwrap();
         merge_histograms(&mut letters, &text_letters);
     }
     letters
