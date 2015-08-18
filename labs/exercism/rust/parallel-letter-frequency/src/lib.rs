@@ -1,3 +1,6 @@
+#![feature(plugin)]
+#![plugin(clippy)]
+
 extern crate threadpool;
 
 use std::collections::HashMap;
@@ -25,16 +28,21 @@ pub fn frequency(texts : &[&str], workers : usize) -> Histogram {
     let mut letters = HashMap::new();
     let (tx, rx) = mpsc::channel();
 
+    let mut nb_texts = 0;
     for text in texts {
         let tx = tx.clone();
         let data = text.to_string();
         pool.execute(move || { 
             tx.send(count_letters(&data));
         });
-        
+        nb_texts += 1;
+    }
+
+    for _ in 0..nb_texts { 
         let text_letters = rx.recv().unwrap();
         merge_histograms(&mut letters, &text_letters);
     }
+
     letters
 }
 
