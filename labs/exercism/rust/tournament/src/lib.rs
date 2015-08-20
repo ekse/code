@@ -26,7 +26,13 @@ impl TeamStats {
 
 impl Roster {
     fn get_team_stats(&mut self, team: String) -> &mut TeamStats {
-        self.roster.entry(team.clone()).or_insert(TeamStats{team_name : team, played : 0, wins : 0, draws: 0, losses: 0})
+        self.roster.entry(team.clone()).or_insert(
+            TeamStats{team_name : team, 
+                played : 0, 
+                wins : 0, 
+                draws: 0, 
+                losses: 0
+                })
     }
 
     pub fn new() -> Roster {
@@ -50,7 +56,55 @@ impl Roster {
         stats.played += 1;
         stats.draws += 1;
     }
+
+    pub fn ordered_roster(&self) -> Vec<&TeamStats> {
+
+        let mut teams : Vec<&TeamStats> = Vec::new();
+
+        for teamstats in self.roster.values() {
+            teams.push(teamstats);
+        }
+
+        teams.sort_by(|a,b| {
+            let mut ord = b.points().cmp(&a.points());
+            if ord == Ordering::Equal {
+                ord = b.wins.cmp(&a.wins);
+                if ord == Ordering::Equal {
+                    ord = a.team_name.cmp(&b.team_name);
+                }
+            }
+            ord
+        });
+
+        teams
+    }
+    
+    pub fn from_game_records(content : String) -> (Roster, usize) {
+        let mut roster = Roster::new();
+        let mut nb_lines = 0;
+        
+        for line in content.lines() {
+            let v : Vec<_> = line.split(";").collect();
+            if v.len() != 3 {
+                continue;
+            }
+
+            let team1  = v[0].to_string();
+            let team2  = v[1].to_string();
+            let result = v[2];
+
+            match result {
+                "win"  => {roster.add_win(team1); roster.add_loss(team2); nb_lines += 1},
+                "loss" => {roster.add_loss(team1); roster.add_win(team2); nb_lines += 1},
+                "draw" => {roster.add_draw(team1); roster.add_draw(team2); nb_lines += 1},
+                _ => {}, // ignore bad lines
+            }
+        }
+        
+        (roster, nb_lines)
+    }
 }
+
 
 pub fn tally(infile: &Path, outfile: &Path) -> Option<usize> {
     let mut file = match File::open(infile) {
@@ -65,44 +119,8 @@ pub fn tally(infile: &Path, outfile: &Path) -> Option<usize> {
 
     }
 
-    let mut roster = Roster::new();
-
-    let mut nb_lines = 0;
-    for line in content.lines() {
-        let v : Vec<_> = line.split(";").collect();
-        if v.len() != 3 {
-            continue;
-        }
-
-        let team1 = v[0].to_string();
-        let team2 = v[1].to_string();
-        let result = v[2];
-
-        match result {
-            "win"  => {roster.add_win(team1); roster.add_loss(team2); nb_lines += 1},
-            "loss" => {roster.add_loss(team1); roster.add_win(team2); nb_lines += 1},
-            "draw" => {roster.add_draw(team1); roster.add_draw(team2); nb_lines += 1},
-            _ => {}, // ignore bad lines
-        }
-    }
-
-    // construct a vector of TeamStats and sort by greatest number of wins
-    let mut teams : Vec<&TeamStats> = Vec::new();
-
-    for teamstats in roster.roster.values() {
-        teams.push(teamstats);
-    }
-
-    teams.sort_by(|a,b| {
-        let mut ord = b.points().cmp(&a.points());
-        if ord == Ordering::Equal {
-            ord = b.wins.cmp(&a.wins);
-            if ord == Ordering::Equal {
-                ord = a.team_name.cmp(&b.team_name);
-            }
-        }
-        ord
-    });
+    let (roster, nb_lines) = Roster::from_game_records(content);
+    let teams = roster.ordered_roster(); 
 
     // write the Roster and output it to a file
     let mut output = String::new();
@@ -128,7 +146,6 @@ pub fn tally(infile: &Path, outfile: &Path) -> Option<usize> {
         Err(reason) => panic!("failed to read from {} : {}", infile.display(), Error::description(&reason)), 
 
     }
-
 
     Some(nb_lines)
 }
