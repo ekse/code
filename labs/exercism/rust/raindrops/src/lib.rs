@@ -4,9 +4,5 @@ pub fn raindrops(n : usize) -> String {
     if n % 5 == 0 { output.push_str("Plang"); }
     if n % 7 == 0 { output.push_str("Plong"); } 
     
-    if output.len() == 0 {
-        output = format!("{}", n);
-    }
-
-    output
+    if output.is_empty() { n.to_string()} else { output }
 }
