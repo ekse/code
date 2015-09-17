@@ -12,22 +12,12 @@ pub enum Error {
     InvalidWord,
 }
 
-pub fn is_word(s : &String) -> bool {
-    return s.len() > 0 && s.chars().all(|c| c.is_alphabetic())
-
-}
-
-// TODO: finish this function
-/*
-pub fn is_number(s : String) -> bool {
-    if s.len() == 0 {
-        return false;
+pub fn is_number(s : &String) -> bool {
+    match s.parse::<i32>() {
+        Ok(_) => true,
+        Err(_) => false,
     }
-    return true;
 }
-*/
-
-
 
 pub struct Forth {
     stack: Vec<i32>,
@@ -51,15 +41,7 @@ impl Forth {
     }
 
     pub fn eval(&mut self, s: &'static str) -> ForthResult {
-        let mut input = s.to_uppercase();
-        input = input.chars().map(|c| {
-            if c.is_alphanumeric() || "+-*/:;".find(c) != None {
-                c
-            } else {
-                ' '
-            }
-        }).collect();
-
+        let input = s.to_uppercase();
         let mut tokens : Vec<String> = vec![];
         for w in input.split_whitespace() {
             tokens.push(w.to_string());
@@ -78,8 +60,8 @@ impl Forth {
             } 
              
             let mut w = t.unwrap();
-            println!("w : {}", w);
 
+            // handle operator +
             if w == "+" {
                 if self.stack.len() < 2 {
                     return Err(Error::StackUnderflow);
@@ -89,6 +71,7 @@ impl Forth {
                 let a = self.stack.pop().unwrap();
                 self.stack.push(a + b);
 
+            // handle operator -
             } else if w == "-" {
                 if self.stack.len() < 2 {
                     return Err(Error::StackUnderflow);
@@ -97,7 +80,8 @@ impl Forth {
                 let b = self.stack.pop().unwrap();
                 let a = self.stack.pop().unwrap();
                 self.stack.push(a - b);
-
+            
+            // handle operator *
             } else if w == "*" {
                 if self.stack.len() < 2 {
                     return Err(Error::StackUnderflow);
@@ -107,6 +91,7 @@ impl Forth {
                 let a = self.stack.pop().unwrap();
                 self.stack.push(a * b);
 
+            // handle operator /
             } else if w == "/" {
                 if self.stack.len() < 2 {
                     return Err(Error::StackUnderflow);
@@ -121,6 +106,7 @@ impl Forth {
 
                 self.stack.push(a / b);
 
+            // handle defined words
             } else if self.words.contains_key(&w.to_string()) {
                 let tokens = &self.words.get(&w.to_string()).unwrap().clone();
                 match self.eval_tokens(tokens) {
@@ -128,6 +114,7 @@ impl Forth {
                     Err(e) => return Err(e),
                 }
 
+            // handle DUP word
             } else if w == "DUP" {
                 if self.stack.len() < 1 {
                     return Err(Error::StackUnderflow);
@@ -136,7 +123,8 @@ impl Forth {
                 let a = self.stack.pop().unwrap();
                 self.stack.push(a);
                 self.stack.push(a);
-
+        
+            // handle DROP word
             } else if w == "DROP" {
                 if self.stack.len() < 1 {
                     return Err(Error::StackUnderflow);
@@ -144,6 +132,7 @@ impl Forth {
 
                 self.stack.pop();
 
+            // handle SWAP word
             } else if w == "SWAP" {
                 if self.stack.len() < 2 {
                     return Err(Error::StackUnderflow);
@@ -155,6 +144,7 @@ impl Forth {
                 self.stack.push(b);
                 self.stack.push(a);
 
+            // handle OVER word
             } else if w == "OVER" {
                 if self.stack.len() < 2 {
                     return Err(Error::StackUnderflow);
@@ -167,23 +157,20 @@ impl Forth {
                 self.stack.push(b);
                 self.stack.push(a);
             
-            // TODO: replace with is_number method and allow - or + only at
-            // the beginning.
-            } else if w.chars().all(|c| c.is_numeric() || "-+".find(c) != None) {
+            // handle numbers
+            } else if is_number(&w) {
                 let v = w.parse::<i32>().unwrap();
                 self.stack.push(v);
-           
+                
+            // handle word definitions
             } else if w == ":" {
-                // handle new word definition
-               
-                // read the word
                 let t = it.next();
                 if t == None {
                     return Err(Error::InvalidWord);  
                 }
                 
                 let word : String = t.unwrap().to_string();
-                if !is_word(&word) {
+                if is_number(&word) {
                     return Err(Error::InvalidWord);  
                 }
                 
