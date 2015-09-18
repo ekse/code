@@ -126,10 +126,8 @@ impl Forth {
                     return Err(Error::StackUnderflow);
                 }
             // handle numbers
-            } else if is_number(&w) {
-                let v = w.parse::<i32>().unwrap();
+            } else if let Ok(v) = w.parse::<i32>()  {
                 self.stack.push(v);
-
             // handle word definitions
             } else if w == ":" {
                 let t = it.next();
