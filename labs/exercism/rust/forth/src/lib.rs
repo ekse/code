@@ -51,60 +51,40 @@ impl Forth {
 
     pub fn eval_tokens(&mut self, tokens: &Vec<String>) -> ForthResult {
         let mut it = tokens.iter();
-        loop {
-            // TODO: change this block to an if-let
-            let t = it.next();
-            if t == None {
-                return Ok(());
-            }
-
-            let mut w = t.unwrap();
+        
+        while let Some(mut w) = it.next() {
 
             // handle operator +
             if w == "+" {
-                if self.stack.len() < 2 {
+                if let (Some(b), Some(a)) = (self.stack.pop(), self.stack.pop()) {
+                    self.stack.push(a + b);
+                } else {
                     return Err(Error::StackUnderflow);
                 }
-
-                let b = self.stack.pop().unwrap();
-                let a = self.stack.pop().unwrap();
-                self.stack.push(a + b);
-
             // handle operator -
             } else if w == "-" {
-                if self.stack.len() < 2 {
+                if let (Some(b), Some(a)) = (self.stack.pop(), self.stack.pop()) {
+                    self.stack.push(a - b);
+                } else {
                     return Err(Error::StackUnderflow);
                 }
-
-                let b = self.stack.pop().unwrap();
-                let a = self.stack.pop().unwrap();
-                self.stack.push(a - b);
-
             // handle operator *
             } else if w == "*" {
-                if self.stack.len() < 2 {
+                if let (Some(b), Some(a)) = (self.stack.pop(), self.stack.pop()) {
+                    self.stack.push(a * b);
+                } else {
                     return Err(Error::StackUnderflow);
                 }
-
-                let b = self.stack.pop().unwrap();
-                let a = self.stack.pop().unwrap();
-                self.stack.push(a * b);
-
             // handle operator /
             } else if w == "/" {
-                if self.stack.len() < 2 {
+                if let (Some(b), Some(a)) = (self.stack.pop(), self.stack.pop()) {
+                    if b == 0 {
+                        return Err(Error::DivisionByZero);
+                    }
+                    self.stack.push(a / b);
+                } else {
                     return Err(Error::StackUnderflow);
                 }
-
-                let b = self.stack.pop().unwrap();
-                let a = self.stack.pop().unwrap();
-
-                if b == 0 {
-                    return Err(Error::DivisionByZero);
-                }
-
-                self.stack.push(a / b);
-
             // handle defined words
             } else if self.words.contains_key(&w.to_string()) {
                 let tokens = &self.words.get(&w.to_string()).unwrap().clone();
@@ -115,47 +95,36 @@ impl Forth {
 
             // handle DUP word
             } else if w == "DUP" {
-                if self.stack.len() < 1 {
+                if let Some(a) = self.stack.pop() {
+                    self.stack.push(a);
+                    self.stack.push(a);
+                } else {
                     return Err(Error::StackUnderflow);
                 }
-
-                let a = self.stack.pop().unwrap();
-                self.stack.push(a);
-                self.stack.push(a);
-
             // handle DROP word
             } else if w == "DROP" {
-                if self.stack.len() < 1 {
+                if let Some(_) = self.stack.pop() {
+                    ()
+                } else {
                     return Err(Error::StackUnderflow);
                 }
-
-                self.stack.pop();
-
             // handle SWAP word
             } else if w == "SWAP" {
-                if self.stack.len() < 2 {
+                if let (Some(b), Some(a)) = (self.stack.pop(), self.stack.pop()) {
+                    self.stack.push(b);
+                    self.stack.push(a);
+                } else {
                     return Err(Error::StackUnderflow);
                 }
-
-                let b = self.stack.pop().unwrap();
-                let a = self.stack.pop().unwrap();
-
-                self.stack.push(b);
-                self.stack.push(a);
-
             // handle OVER word
             } else if w == "OVER" {
-                if self.stack.len() < 2 {
+                if let (Some(b), Some(a)) = (self.stack.pop(), self.stack.pop()) {
+                    self.stack.push(a);
+                    self.stack.push(b);
+                    self.stack.push(a);
+                } else {
                     return Err(Error::StackUnderflow);
                 }
-
-                let b = self.stack.pop().unwrap();
-                let a = self.stack.pop().unwrap();
-
-                self.stack.push(a);
-                self.stack.push(b);
-                self.stack.push(a);
-
             // handle numbers
             } else if is_number(&w) {
                 let v = w.parse::<i32>().unwrap();
@@ -200,5 +169,7 @@ impl Forth {
                 return Err(Error::UnknownWord);
             }
         }
+        
+        Ok(())
     }
 }
