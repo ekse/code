@@ -12,7 +12,7 @@ pub enum Error {
     InvalidWord,
 }
 
-pub fn is_number(s : &String) -> bool {
+pub fn is_number(s: &String) -> bool {
     match s.parse::<i32>() {
         Ok(_) => true,
         Err(_) => false,
@@ -26,7 +26,7 @@ pub struct Forth {
 
 impl Forth {
     pub fn new() -> Forth {
-        Forth { stack: vec![], words : HashMap::new() }
+        Forth { stack: vec![], words: HashMap::new() }
 
     }
 
@@ -42,23 +42,22 @@ impl Forth {
 
     pub fn eval(&mut self, s: &'static str) -> ForthResult {
         let input = s.to_uppercase();
-        let mut tokens : Vec<String> = vec![];
+        let mut tokens: Vec<String> = vec![];
         for w in input.split_whitespace() {
             tokens.push(w.to_string());
         }
         self.eval_tokens(&tokens)
     }
-    
-    pub fn eval_tokens(&mut self, tokens : &Vec<String>) -> ForthResult {
 
-        let mut it = tokens.iter(); 
+    pub fn eval_tokens(&mut self, tokens: &Vec<String>) -> ForthResult {
+        let mut it = tokens.iter();
         loop {
             // TODO: change this block to an if-let
             let t = it.next();
             if t == None {
-               return Ok(());
-            } 
-             
+                return Ok(());
+            }
+
             let mut w = t.unwrap();
 
             // handle operator +
@@ -80,7 +79,7 @@ impl Forth {
                 let b = self.stack.pop().unwrap();
                 let a = self.stack.pop().unwrap();
                 self.stack.push(a - b);
-            
+
             // handle operator *
             } else if w == "*" {
                 if self.stack.len() < 2 {
@@ -123,7 +122,7 @@ impl Forth {
                 let a = self.stack.pop().unwrap();
                 self.stack.push(a);
                 self.stack.push(a);
-        
+
             // handle DROP word
             } else if w == "DROP" {
                 if self.stack.len() < 1 {
@@ -156,49 +155,49 @@ impl Forth {
                 self.stack.push(a);
                 self.stack.push(b);
                 self.stack.push(a);
-            
+
             // handle numbers
             } else if is_number(&w) {
                 let v = w.parse::<i32>().unwrap();
                 self.stack.push(v);
-                
+
             // handle word definitions
             } else if w == ":" {
                 let t = it.next();
                 if t == None {
-                    return Err(Error::InvalidWord);  
+                    return Err(Error::InvalidWord);
                 }
-                
-                let word : String = t.unwrap().to_string();
+
+                let word: String = t.unwrap().to_string();
                 if is_number(&word) {
-                    return Err(Error::InvalidWord);  
+                    return Err(Error::InvalidWord);
                 }
-                
-                let mut definition : Vec<String> = vec![];
-                
-               loop {
+
+                let mut definition: Vec<String> = vec![];
+
+                loop {
                     let t = it.next();
                     if t == None {
-                        return Err(Error::InvalidWord);  
+                        return Err(Error::InvalidWord);
                     }
-                    
+
                     w = t.unwrap();
 
                     if w == ";" {
                         break;
                     }
-                    
+
                     definition.push(w.to_string());
                 }
 
                 if definition.len() == 0 {
-                    return Err(Error::InvalidWord);  
+                    return Err(Error::InvalidWord);
                 }
 
                 self.words.insert(word, definition);
 
             } else {
-                return Err(Error::UnknownWord);        
+                return Err(Error::UnknownWord);
             }
         }
     }
