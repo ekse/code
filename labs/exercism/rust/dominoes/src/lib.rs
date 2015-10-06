@@ -1,4 +1,3 @@
-
 use std::collections::HashMap;
 
 pub type Domino = (usize, usize);
@@ -35,12 +34,12 @@ fn add_to_chain(pieces: &Vec<Domino>, chain: &Vec<Domino>) -> Option<Vec<Domino>
                 piece = (piece.1, piece.0) // flip the piece
             }
            
-            let mut new_chain = chain.clone();
-            new_chain.push(piece);
-            new_pieces.extend(tried_pieces.iter().cloned());
-            match add_to_chain(&new_pieces, &new_chain) {
-                Some(o) => return Some(o),
-                _ => false,
+            let mut candidate_chain = chain.clone();
+            candidate_chain.push(piece);
+            let mut candidate_pieces = new_pieces.clone();
+            candidate_pieces.extend(tried_pieces.iter().cloned());
+            if let Some(found_chain) = add_to_chain(&candidate_pieces, &candidate_chain) {
+                return Some(found_chain);
             };
         }
 
