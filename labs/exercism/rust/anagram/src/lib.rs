@@ -10,31 +10,18 @@ fn sort_string(s : &str) -> String {
     out
 }
 
-fn lowercase(s : &str) -> String {
-    
-    let mut out = String::with_capacity(s.len());
-    for c in s.chars() {
-        for lower in c.to_lowercase() {
-            out.push(lower);
-        }
-    }
-    
-    out
-    
-}
-
-
 pub fn anagrams_for<'a>(word: &str, inputs: &[&'a str]) -> Vec<&'a str> {
     let mut result : Vec<&str> = vec![];
-   
-    let lowercase_word = lowercase(word);
+  
+    let lowercase_word = word.to_lowercase();
     let sorted_word = sort_string(&lowercase_word);
 
     for input in inputs {
-        let lowercase_input = lowercase(input);
+        let lowercase_input = input.to_lowercase();
         if lowercase_word == lowercase_input {
             continue;
         }
+
         let sorted_input = sort_string(&lowercase_input);
         if sorted_word == sorted_input {
             result.push(input);
