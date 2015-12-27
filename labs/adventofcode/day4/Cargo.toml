@@ -1,0 +1,8 @@
+[package]
+name = "day4"
+version = "0.1.0"
+authors = ["Sébastien Duquette <ekse.0x@gmail.com>"]
+
+[dependencies]
+rust-crypto = "^0.2"
+rustc-serialize = "0.3.16"
