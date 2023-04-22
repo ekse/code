@@ -1,0 +1,2 @@
+!/bin/sh
+cat /etc/flags/level2 > flag
